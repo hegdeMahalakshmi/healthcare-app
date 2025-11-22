@@ -1,13 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
-import HomePage from './pages/HomePage';
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from "react";
+import { routesConfig } from "./Routes/routes";
+import RouteComponent from "./RouteComponent";
 function App() {
   return (
-    <div className="App">
-      <HomePage />
-    </div>
+    <>
+      <Router>
+        <Routes>
+          {routesConfig.map((route) => (
+            <Route
+              path={route.path}
+              element={
+                <RouteComponent
+                  layout={route.layout}
+                  component={route.component}
+                />
+              }
+            />
+
+          ))}
+        </Routes>
+      </Router>
+    </>
   );
 }
 
 export default App;
+
