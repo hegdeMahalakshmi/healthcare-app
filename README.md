@@ -1,40 +1,3 @@
-# Healthcare App
-
-A comprehensive healthcare management application built with React that enables patient wellness tracking and provider-patient management. The app features role-based dashboards for both patients and healthcare providers with real-time compliance monitoring and goal tracking.
-
-## Features
-
-### Patient Dashboard
-
-- 📊 Track daily wellness goals (steps, water intake, sleep, etc.)
-- 📈 Monitor health metrics and progress
-- 👤 Manage personal profile and health information
-- 🎯 Set and track health goals
-- 🔔 Receive health notifications and reminders
-
-### Provider Dashboard
-
-- 👥 View and manage patient list
-- 📉 Monitor patient compliance rates
-- 📋 View detailed patient information and goal history
-- 🔔 Automated notifications for low compliance patients
-- 📊 Sortable and filterable patient data tables
-
-### Authentication
-
-- 🔐 Email/Password authentication
-- 🌐 Google Sign-In integration
-- 🔒 Role-based access control (Patient/Provider)
-- 🚪 Secure logout functionality
-
-## Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **Node.js** (v14 or higher) - [Download here](https://nodejs.org/)
-- **npm** (comes with Node.js) or **yarn**
-- A **Firebase account** - [Create one here](https://firebase.google.com/)
-
 ## Setup Instructions
 
 ### 1. Clone the Repository
@@ -114,6 +77,43 @@ Builds the app for production to the `build` folder
 ### `npm run eject`
 
 **Note: This is a one-way operation!** Ejects from Create React App configuration
+
+# Healthcare App
+
+A comprehensive healthcare management application built with React that enables patient wellness tracking and provider-patient management. The app features role-based dashboards for both patients and healthcare providers with real-time compliance monitoring and goal tracking.
+
+## Features
+
+### Patient Dashboard
+
+- 📊 Track daily wellness goals (steps, water intake, sleep, etc.)
+- 📈 Monitor health metrics and progress
+- 👤 Manage personal profile and health information
+- 🎯 Set and track health goals
+- 🔔 Receive health notifications and reminders
+
+### Provider Dashboard
+
+- 👥 View and manage patient list
+- 📉 Monitor patient compliance rates
+- 📋 View detailed patient information and goal history
+- 🔔 Automated notifications for low compliance patients
+- 📊 Sortable and filterable patient data tables
+
+### Authentication
+
+- 🔐 Email/Password authentication
+- 🌐 Google Sign-In integration
+- 🔒 Role-based access control (Patient/Provider)
+- 🚪 Secure logout functionality
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** (v14 or higher) - [Download here](https://nodejs.org/)
+- **npm** (comes with Node.js) or **yarn**
+- A **Firebase account** - [Create one here](https://firebase.google.com/)
 
 ## Project Structure
 
