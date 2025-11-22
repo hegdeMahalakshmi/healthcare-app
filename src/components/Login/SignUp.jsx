@@ -13,7 +13,7 @@ export default function Signup() {
       message.success("User registered successfully!");
       nav("/login");
     } catch (err) {
-      message.error('Not able to login, Invalid credential');
+      message.error('Not able to signup');
     }
   };
 
@@ -23,7 +23,7 @@ export default function Signup() {
       message.success("Logged in with Google!");
       nav("/login");
     } catch (err) {
-      message.error('Not able to login, Invalid credential');
+      message.error('Not able to signup');
     }
   };
 

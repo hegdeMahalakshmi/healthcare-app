@@ -1,7 +1,8 @@
 import React, { useContext, useState } from "react";
 import { Form, Input, Button, Upload, Modal, Card, Typography, Divider, Row, Col } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { PatientContext } from "../../context/PatientContext";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
@@ -9,6 +10,7 @@ const ProfileForm = () => {
   const { profile, setProfile } = useContext(PatientContext);
   const [form] = Form.useForm();
   const [showSuccess, setShowSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (values) => {
     setProfile(values);
@@ -32,6 +34,15 @@ const ProfileForm = () => {
           padding: 20,
         }}
       >
+        {/* Back Button */}
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate(-1)}
+          style={{ marginBottom: 20 }}
+        >
+          Back
+        </Button>
+
         {/* Header */}
         <Title level={3} style={{ textAlign: "center", marginBottom: 20 }}>
           Update Profile

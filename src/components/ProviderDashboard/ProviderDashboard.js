@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import './ProviderDashboard.css';
 import { Button, Table, Tag, Card, Typography, Modal, message } from 'antd';
-import { EyeOutlined, UserOutlined } from '@ant-design/icons';
+import { EyeOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import PatientDetailCard from './PatientDetailCard';
 import { checkAndNotifyLowCompliance } from '../../utils/notificationService';
+import { useAuth } from '../../context/AuthContext';
 
 const { Title } = Typography;
 
@@ -24,6 +26,19 @@ const getComplianceTag = (compliance) => {
 const ProviderDashboard = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    // Handle logout
+    const handleLogout = async () => {
+        try {
+            await logout();
+            message.success('Logged out successfully');
+            navigate('/login');
+        } catch (error) {
+            message.error('Failed to logout');
+        }
+    };
 
     // Handle view details action
     const handleViewDetails = (record) => {
@@ -244,10 +259,22 @@ const ProviderDashboard = () => {
     return (
         <div className="provider-dashboard-container">
             <Card>
-                <Title level={2}>Provider Dashboard</Title>
-                <Title level={4} type="secondary">
-                    Patient Compliance Overview
-                </Title>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <div>
+                        <Title level={2} style={{ marginBottom: 0 }}>Provider Dashboard</Title>
+                        <Title level={4} type="secondary" style={{ marginTop: '8px' }}>
+                            Patient Compliance Overview
+                        </Title>
+                    </div>
+                    <Button
+                        type="default"
+                        danger
+                        icon={<LogoutOutlined />}
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </Button>
+                </div>
                 <Table
                     columns={columns}
                     dataSource={data}

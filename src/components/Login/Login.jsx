@@ -17,10 +17,10 @@ export default function Login() {
       if (currentUser.role ==='provider') {
         nav("/provider-dashboard");
       } else {
-        nav("/error");
+        nav("/patient/dashboard");
       }
     } catch (err) {
-      message.error(err.message);
+      message.error('Invalid credentials');
     }
   };
 
