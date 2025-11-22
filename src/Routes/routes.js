@@ -2,6 +2,10 @@ import ProviderDashboard from '../components/ProviderDashboard/ProviderDashboard
 import { lazy } from 'react';
 import Login from '../components/Login/Login.jsx';
 import ErrorPage from '../pages/ErrorPage';
+import PatientDashboard from "../pages/patient/Dashboard";
+import MyProfile from "../pages/patient/MyProfile";
+import GoalTracker from "../pages/patient/GoalTracker";
+import ProfileForm from "../pages/patient/ProfileForm";
 
 const SignUp = lazy(() => import('../components/Login/SignUp.jsx'));
 
@@ -44,5 +48,30 @@ export const routesConfig = [
         path: '/error',
         component: ErrorPage,
         exact: true
+    },
+    {
+        path: "/",
+        component: MyProfile,
+        layout: null
+    },
+    //   {
+    //     path: "/provider-dashboard",
+    //     component: ProviderDashboard,
+    //     layout: null
+    //   },
+    {
+        path: "/patient/dashboard",
+        component: PatientDashboard,
+        layout: null
+    },
+    {
+        path: "/patient/Profile",
+        component: ProfileForm,
+        layout: null
+    },
+    {
+        path: "/patient/goals",
+        component: GoalTracker,
+        layout: null
     }
 ];

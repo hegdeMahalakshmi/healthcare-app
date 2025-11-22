@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React, { Suspense } from "react";
 import { routesConfig, SuspenseFallback } from "./Routes/routes";
@@ -35,4 +36,3 @@ function App() {
 }
 
 export default App;
-

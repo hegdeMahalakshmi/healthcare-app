@@ -1,8 +1,18 @@
-const RouteComponent = (props) => {
-    const { component: Component, layout: Layout } = props;
-    const getComponent = () => <Component />;
+import React from "react";
 
-    return Layout ? <Layout>{getComponent()}</Layout> : getComponent();
+const RouteComponent = ({ component: Component, layout: Layout }) => {
+
+  // If layout is provided, wrap component with layout
+  if (Layout) {
+    return (
+      <Layout>
+        <Component />
+      </Layout>
+    );
+  }
+
+  // Otherwise return just the component
+  return <Component />;
 };
 
 export default RouteComponent;
