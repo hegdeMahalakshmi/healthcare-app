@@ -11,3 +11,31 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height:100vh;
+}
+
+.mt-10 {
+  margin-top: 2.5rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-blue-600 {
+  color: #2563eb;
+}
+
+.underline {
+  text-decoration: underline;
+}
