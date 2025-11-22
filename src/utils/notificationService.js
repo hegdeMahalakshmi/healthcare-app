@@ -2,6 +2,10 @@
 import { messaging } from '../firebase';
 import { getToken } from 'firebase/messaging';
 
+// Track recently sent notifications to prevent duplicates
+const notificationHistory = new Map();
+const NOTIFICATION_COOLDOWN = 55000; // 55 seconds cooldown to prevent duplicates within 1 minute
+
 const sendAutomatedNotification = async (patient) => {
     try {
         const notificationData = {
@@ -44,16 +48,19 @@ const sendAutomatedNotification = async (patient) => {
 
                 // Show browser notification if permission granted
                 if (Notification.permission === 'granted') {
+                    // Add timestamp to tag to ensure each notification is unique
+                    const uniqueTag = `patient-${patient.key}-${Date.now()}`;
                     new Notification('⚠️ Low Compliance Alert', {
                         body: `${patient.patientName} has compliance level of ${patient.compliance}% (Below 60%)`,
                         icon: '/logo192.png',
                         badge: '/logo192.png',
-                        tag: `patient-${patient.key}`,
+                        tag: uniqueTag,
                         requireInteraction: true,
                         data: {
                             patientId: patient.key,
                             patientName: patient.patientName,
-                            compliance: patient.compliance
+                            compliance: patient.compliance,
+                            timestamp: Date.now()
                         }
                     });
                 }
@@ -98,16 +105,46 @@ export const checkAndNotifyLowCompliance = async (patients) => {
         };
     }
 
+    // Filter out patients who were recently notified
+    const currentTime = Date.now();
+    const patientsToNotify = lowCompliancePatients.filter(patient => {
+        const lastNotification = notificationHistory.get(patient.key);
+        if (!lastNotification || (currentTime - lastNotification) > NOTIFICATION_COOLDOWN) {
+            return true;
+        }
+        console.log(`Skipping notification for ${patient.patientName} - sent ${Math.round((currentTime - lastNotification) / 1000)}s ago`);
+        return false;
+    });
+
+    if (patientsToNotify.length === 0) {
+        console.log('All low compliance patients were recently notified');
+        return {
+            processed: lowCompliancePatients.length,
+            successful: 0,
+            failed: 0,
+            message: 'All patients recently notified, skipping to avoid duplicates'
+        };
+    }
+
+    // Send notifications and update history
     const results = await Promise.all(
-        lowCompliancePatients.map(patient => sendAutomatedNotification(patient))
+        patientsToNotify.map(async (patient) => {
+            const result = await sendAutomatedNotification(patient);
+            if (result.success) {
+                notificationHistory.set(patient.key, Date.now());
+            }
+            return result;
+        })
     );
 
     const successCount = results.filter(r => r.success).length;
 
+    console.log(`Sent ${successCount} notifications to ${patientsToNotify.length} patients`);
+
     return {
         processed: lowCompliancePatients.length,
         successful: successCount,
-        failed: lowCompliancePatients.length - successCount,
+        failed: patientsToNotify.length - successCount,
         results
     };
 };
