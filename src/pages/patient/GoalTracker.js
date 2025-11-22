@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import { PatientContext } from "../../context/PatientContext";
 import { useNavigate } from "react-router-dom";
+import './patient.css';
 
 const { Title, Text } = Typography;
 
@@ -77,6 +78,7 @@ const GoalTracker = () => {
           padding: 20,
           margin: "20px auto",
         }}
+        className="goalTracker"
       >
         <Row gutter={12}>
           <Col flex="auto">

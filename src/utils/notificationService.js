@@ -1,8 +1,9 @@
 // Notification service for automated patient compliance alerts
+import { messaging } from '../firebase';
+import { getToken } from 'firebase/messaging';
 
 const sendAutomatedNotification = async (patient) => {
     try {
-        // TODO: Replace with actual API endpoint
         const notificationData = {
             patientId: patient.key,
             patientName: patient.patientName,
@@ -11,20 +12,65 @@ const sendAutomatedNotification = async (patient) => {
             compliance: patient.compliance,
             subject: 'Important: Compliance Alert',
             message: `Dear ${patient.patientName},\n\nWe've noticed that your treatment compliance rate is currently at ${patient.compliance}%, which is below our recommended threshold.\n\nMaintaining good compliance is crucial for your health outcomes. Please contact us to discuss your treatment plan and any challenges you may be facing.\n\nBest regards,\nYour Healthcare Team`,
-            notificationType: 'email', // Can be 'email', 'sms', or 'both'
+            notificationType: 'firebase', // Firebase push notification
             timestamp: new Date().toISOString(),
         };
 
-        // Simulate API call - Replace with actual fetch/axios call
-        console.log('Automated notification sent:', notificationData);
+        // Send Firebase Cloud Messaging notification
+        try {
+            // Get FCM token (in production, this should be stored in backend)
+            const token = await getToken(messaging, {
+                vapidKey: 'BIVokC_WxK9y9TKzFRVRDd6YuDllaga_gR5l7CQigK5_M5rgyKNLTpiMoEhm4htPx2ChOHmFOrPecAFxEhqIHEE' // Replace with your VAPID key
+            });
 
-        // Example API call structure:
-        // const response = await fetch('/api/notifications/send', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(notificationData)
-        // });
-        // return response.json();
+            if (token) {
+                // In production, send this to your backend server which will use Firebase Admin SDK
+                // to send the notification to the provider's device
+                const fcmPayload = {
+                    token: token,
+                    notification: {
+                        title: '⚠️ Low Compliance Alert',
+                        body: `${patient.patientName} has compliance level of ${patient.compliance}% (Below 60%)`,
+                    },
+                    data: {
+                        patientId: patient.key,
+                        patientName: patient.patientName,
+                        compliance: patient.compliance.toString(),
+                        type: 'low-compliance-alert'
+                    }
+                };
+
+                console.log('Firebase notification payload:', fcmPayload);
+
+                // Show browser notification if permission granted
+                if (Notification.permission === 'granted') {
+                    new Notification('⚠️ Low Compliance Alert', {
+                        body: `${patient.patientName} has compliance level of ${patient.compliance}% (Below 60%)`,
+                        icon: '/logo192.png',
+                        badge: '/logo192.png',
+                        tag: `patient-${patient.key}`,
+                        requireInteraction: true,
+                        data: {
+                            patientId: patient.key,
+                            patientName: patient.patientName,
+                            compliance: patient.compliance
+                        }
+                    });
+                }
+
+                // TODO: Send to backend API for server-side FCM notification
+                // const response = await fetch('/api/notifications/send-fcm', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(fcmPayload)
+                // });
+                // return response.json();
+            }
+        } catch (fcmError) {
+            console.error('FCM notification error:', fcmError);
+        }
+
+        console.log('Automated notification sent:', notificationData);
 
         return {
             success: true,
