@@ -1,22 +1,36 @@
 import React, { useContext } from "react";
-import { Card, Progress, Row, Col, Typography, Divider, Tag, Button } from "antd";
+import { Card, Progress, Row, Col, Typography, Divider, Tag, Button, message } from "antd";
+import { LogoutOutlined } from '@ant-design/icons';
 import { PatientContext } from "../../context/PatientContext";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const { Title, Text } = Typography;
 
 const Dashboard = () => {
   const { goals } = useContext(PatientContext);
   const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await logout();
+      message.success('Logged out successfully');
+      navigate('/login');
+    } catch (error) {
+      message.error('Failed to logout');
+    }
+  };
 
   return (
     <div style={{ padding: 20, maxWidth: "1080px", margin: "auto" }}>
-      
+
       {/* ================================
             BREADCRUMB + ACTION BUTTONS
       ================================= */}
-      <div 
-        style={{ 
+      <div
+        style={{
           marginBottom: 20,
           display: "flex",
           justifyContent: "space-between",
@@ -26,25 +40,34 @@ const Dashboard = () => {
         <div>Home / Patient / <b>Dashboard</b></div>
 
         <div>
-          <Button 
-            style={{ marginRight: 10 }} 
+          <Button
+            style={{ marginRight: 10 }}
             onClick={() => navigate(-1)}
           >
             ⬅ Back
           </Button>
 
-          <Button 
+          <Button
             style={{ marginRight: 10 }}
-            onClick={() => navigate("/patient/my-profile")}
+            onClick={() => navigate("/patient/profile")}
           >
             My Profile
           </Button>
 
-          <Button 
+          <Button
             type="primary"
             onClick={() => navigate("/patient/goals")}
           >
             Goal Tracker
+          </Button>
+
+          <Button
+            danger
+            icon={<LogoutOutlined />}
+            onClick={handleLogout}
+            style={{ marginLeft: 10 }}
+          >
+            Logout
           </Button>
         </div>
       </div>
