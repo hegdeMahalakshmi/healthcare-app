@@ -5,6 +5,20 @@ import ErrorPage from '../pages/ErrorPage';
 
 const SignUp = lazy(() => import('../components/Login/SignUp.jsx'));
 
+// Suspense fallback component
+export const SuspenseFallback = () => (
+    <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '1.2rem',
+        color: '#666'
+    }}>
+        Loading...
+    </div>
+);
+
 export const routesConfig = [
     {
         path: '/',
