@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Form, Input, Button, Upload, Modal, Card, Typography, Divider, Row, Col } from "antd";
-import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { UploadOutlined, ArrowLeftOutlined, EditOutlined } from "@ant-design/icons";
 import { PatientContext } from "../../context/PatientContext";
 import { useNavigate } from "react-router-dom";
 
@@ -10,11 +10,22 @@ const ProfileForm = () => {
   const { profile, setProfile } = useContext(PatientContext);
   const [form] = Form.useForm();
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (values) => {
     setProfile(values);
     setShowSuccess(true); // Show modal
+    setIsEditing(false); // Exit edit mode after saving
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    form.resetFields();
+    setIsEditing(false);
   };
 
   return (
@@ -43,10 +54,21 @@ const ProfileForm = () => {
           Back
         </Button>
 
-        {/* Header */}
-        <Title level={3} style={{ textAlign: "center", marginBottom: 20 }}>
-          Update Profile
-        </Title>
+        {/* Header with Edit Button */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <Title level={3} style={{ margin: 0, textAlign: "center", flex: 1 }}>
+            {isEditing ? "Update Profile" : "My Profile"}
+          </Title>
+          {!isEditing && (
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              onClick={handleEdit}
+            >
+              Edit
+            </Button>
+          )}
+        </div>
 
         <Divider />
 
@@ -61,18 +83,20 @@ const ProfileForm = () => {
           <Row gutter={[20, 20]}>
             <Col xs={24} md={8} style={{ textAlign: "center" }}>
               <Form.Item label="Profile Picture">
-                <Upload
-                  beforeUpload={(file) => {
-                    const reader = new FileReader();
-                    reader.onload = () => {
-                      form.setFieldsValue({ profilePic: reader.result });
-                    };
-                    reader.readAsDataURL(file);
-                    return false;
-                  }}
-                >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
-                </Upload>
+                {isEditing && (
+                  <Upload
+                    beforeUpload={(file) => {
+                      const reader = new FileReader();
+                      reader.onload = () => {
+                        form.setFieldsValue({ profilePic: reader.result });
+                      };
+                      reader.readAsDataURL(file);
+                      return false;
+                    }}
+                  >
+                    <Button icon={<UploadOutlined />}>Upload</Button>
+                  </Upload>
+                )}
 
                 {form.getFieldValue("profilePic") && (
                   <img
@@ -102,7 +126,7 @@ const ProfileForm = () => {
                 name="fullName"
                 rules={[{ required: true, message: "Full name is required" }]}
               >
-                <Input placeholder="Enter your full name" />
+                <Input placeholder="Enter your full name" disabled={!isEditing} />
               </Form.Item>
 
               <Form.Item
@@ -113,7 +137,7 @@ const ProfileForm = () => {
                   { type: "email", message: "Invalid email address" },
                 ]}
               >
-                <Input placeholder="Enter your email" />
+                <Input placeholder="Enter your email" disabled={!isEditing} />
               </Form.Item>
             </Col>
           </Row>
@@ -124,19 +148,19 @@ const ProfileForm = () => {
           <Row gutter={[20, 20]}>
             <Col xs={24} md={8}>
               <Form.Item label="Age" name="age">
-                <Input type="number" placeholder="Age" />
+                <Input type="number" placeholder="Age" disabled={!isEditing} />
               </Form.Item>
             </Col>
 
             <Col xs={24} md={8}>
               <Form.Item label="Height (cm)" name="height">
-                <Input type="number" placeholder="Height in cm" />
+                <Input type="number" placeholder="Height in cm" disabled={!isEditing} />
               </Form.Item>
             </Col>
 
             <Col xs={24} md={8}>
               <Form.Item label="Weight (kg)" name="weight">
-                <Input type="number" placeholder="Weight in kg" />
+                <Input type="number" placeholder="Weight in kg" disabled={!isEditing} />
               </Form.Item>
             </Col>
           </Row>
@@ -144,17 +168,22 @@ const ProfileForm = () => {
           <Row gutter={[20, 20]}>
             <Col xs={24}>
               <Form.Item label="Contact Number" name="contact">
-                <Input placeholder="Enter contact number" />
+                <Input placeholder="Enter contact number" disabled={!isEditing} />
               </Form.Item>
             </Col>
           </Row>
 
           {/* Submit Button */}
-          <div style={{ textAlign: "center", marginTop: 10 }}>
-            <Button type="primary" size="large" htmlType="submit">
-              Save Profile
-            </Button>
-          </div>
+          {isEditing && (
+            <div style={{ textAlign: "center", marginTop: 10, display: "flex", gap: "10px", justifyContent: "center" }}>
+              <Button size="large" onClick={handleCancel}>
+                Cancel
+              </Button>
+              <Button type="primary" size="large" htmlType="submit">
+                Save Profile
+              </Button>
+            </div>
+          )}
         </Form>
       </Card>
 

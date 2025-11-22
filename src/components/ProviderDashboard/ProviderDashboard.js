@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import 'antd/dist/antd.css';
 import './ProviderDashboard.css';
 import { Button, Table, Tag, Card, Typography, Modal, message } from 'antd';
-import { EyeOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { EyeOutlined, UserOutlined, LogoutOutlined, BellOutlined } from '@ant-design/icons';
 import PatientDetailCard from './PatientDetailCard';
+import NotificationStatus from './NotificationStatus';
 import { checkAndNotifyLowCompliance } from '../../utils/notificationService';
 import { useAuth } from '../../context/AuthContext';
+import { requestNotificationPermission, onMessageListener } from '../../firebase';
 
 const { Title } = Typography;
 
@@ -26,6 +28,7 @@ const getComplianceTag = (compliance) => {
 const ProviderDashboard = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
+    const [notificationToken, setNotificationToken] = useState(null);
     const { logout } = useAuth();
     const navigate = useNavigate();
 
@@ -230,6 +233,40 @@ const ProviderDashboard = () => {
         },
     ];
 
+    // Initialize Firebase Cloud Messaging
+    useEffect(() => {
+        // Request notification permission and get token
+        const initializeNotifications = async () => {
+            const token = await requestNotificationPermission();
+            if (token) {
+                setNotificationToken(token);
+                message.success('Push notifications enabled successfully', 3);
+            } else {
+                message.warning('Please enable notifications for real-time alerts', 5);
+            }
+        };
+
+        initializeNotifications();
+
+        // Listen for foreground messages
+        onMessageListener()
+            .then((payload) => {
+                console.log('Received foreground message:', payload);
+                message.warning({
+                    content: (
+                        <div>
+                            <strong>{payload.notification?.title}</strong>
+                            <br />
+                            {payload.notification?.body}
+                        </div>
+                    ),
+                    duration: 10,
+                    icon: <BellOutlined style={{ color: '#ff4d4f' }} />,
+                });
+            })
+            .catch((err) => console.log('Failed to receive foreground message:', err));
+    }, []);
+
     // Automated notification system
     useEffect(() => {
         // Send automated notifications on component mount
@@ -246,15 +283,15 @@ const ProviderDashboard = () => {
 
         sendNotifications();
 
-        // Set up daily automated notifications (every 24 hours)
+        // Set up automated notifications check (every 1 minute)
         const intervalId = setInterval(() => {
             sendNotifications();
-        }, 24 * 60 * 60 * 1000);
+        }, 60 * 1000); // Check every 1 minute
 
         // Cleanup interval on unmount
         return () => clearInterval(intervalId);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Run once on mount and set up daily interval
+    }, []); // Run once on mount and set up interval
 
     return (
         <div className="provider-dashboard-container">
@@ -275,6 +312,13 @@ const ProviderDashboard = () => {
                         Logout
                     </Button>
                 </div>
+
+                {/* Notification Status Alert */}
+                <NotificationStatus
+                    patients={data}
+                    notificationEnabled={notificationToken !== null}
+                />
+
                 <Table
                     columns={columns}
                     dataSource={data}
