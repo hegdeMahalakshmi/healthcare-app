@@ -5,26 +5,27 @@ import ProviderDashboard from "../components/ProviderDashboard/ProviderDashboard
 import PatientDashboard from "../pages/patient/Dashboard";
 import MyProfile from "../pages/patient/MyProfile";
 import GoalTracker from "../pages/patient/GoalTracker";
+import ProfileForm from "../pages/patient/ProfileForm";
 
 export const routesConfig = [
   {
     path: "/",
-    component: HomePage,
+    component: MyProfile,
     layout: null
   },
-  {
-    path: "/provider-dashboard",
-    component: ProviderDashboard,
-    layout: null
-  },
+//   {
+//     path: "/provider-dashboard",
+//     component: ProviderDashboard,
+//     layout: null
+//   },
   {
     path: "/patient/dashboard",
     component: PatientDashboard,
     layout: null
   },
   {
-    path: "/patient/my-profile",
-    component: MyProfile,
+    path: "/patient/Profile",
+    component: ProfileForm,
     layout: null
   },
   {
